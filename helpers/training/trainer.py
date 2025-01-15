@@ -2844,6 +2844,23 @@ class Trainer:
                             self.validation.clear_eval_result()
                             wandb_logs.update(eval_result)
 
+                    # ad-hoc timing:
+                    if True:
+                        if self.state["global_step"] == 4:
+                            from time import time
+                            #import numpy as np
+                            times = []
+                            start_time=time()
+                        elif self.state["global_step"] > 4:
+                            times.append(time())
+                            samples_done = int(self.config.train_batch_size) * len(times) * int(getattr(self.accelerator, "num_processes", 1))
+                            time_passed = times[-1]-start_time
+                            print('%i images processed in %0.2f s ===> %0.2f ,images / second' % (samples_done, time_passed, samples_done/time_passed) ) 
+                            #print( "Mean and std %0.2f +- %0.2f"%( np.mean(times), np.std(times) ))
+                            
+                        if self.state["global_step"] == 30:
+                            sys.exit(0)                        
+
                     progress_bar.update(1)
                     self.state["global_step"] += 1
                     current_epoch_step += 1
